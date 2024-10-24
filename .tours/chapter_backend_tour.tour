@@ -1,0 +1,87 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "chapter_backend_tour",
+  "steps": [
+    {
+      "file": "src/app.module.ts",
+      "description": "We define a simple app that triggers a function every 5 seconds. To do it we will use @nestjs/schedule module \n\n```typescript\n  imports: [ScheduleModule.forRoot()],\n```",
+      "line": 4
+    },
+    {
+      "file": "src/tasks.service.ts",
+      "description": "Now we define a provider with a function decorated with `@Cron('*/5 * * * * *')`",
+      "line": 3
+    },
+    {
+      "file": "src/app.module.ts",
+      "description": "You may wonder... How is it even possible that Nest knows what to do just because we added a decorator. Let's dig deeper into ScheduleModule",
+      "line": 9
+    },
+    {
+      "file": "schedule/lib/schedule.module.ts",
+      "description": "ScheduleModule imports something called DiscoveryModule",
+      "line": 9
+    },
+    {
+      "file": "nest/packages/core/discovery/discovery-module.ts",
+      "description": "Discovery service exports two providers - MetadataScanner and DiscoveryService",
+      "line": 10
+    },
+    {
+      "file": "nest/packages/core/metadata-scanner.ts",
+      "description": "MetadataScanner main function is to return a list of names of methods of an object",
+      "line": 75
+    },
+    {
+      "file": "nest/packages/core/discovery/discovery-service.ts",
+      "description": "DiscoveryService provides a set of functions useful when we work with custom decorators. It allows us to create decorators that adds metadata to a class, provides a function to return a filterable list of the modules, controllers, providers",
+      "line": 83
+    },
+    {
+      "file": "schedule/lib/schedule.explorer.ts",
+      "description": "In our example ScheduleExplorer iterates over all the controllers and provides in search for the scheduler methods",
+      "line": 28,
+      "title": "step 123"
+    },
+    {
+      "file": "schedule/lib/schedule.explorer.ts",
+      "description": "For every controller and provider we get a list of their functions, and then we process every each one of them",
+      "line": 54
+    },
+    {
+      "file": "schedule/lib/schedule.explorer.ts",
+      "description": "What we are interested in is method metadata",
+      "line": 63
+    },
+    {
+      "file": "schedule/lib/schedule-metadata.accessor.ts",
+      "description": "Given a specific key, we try to get the information about a method that may be useful for us. How do we add that information?... Let's go back to our TasksService",
+      "line": 20
+    },
+    {
+      "file": "src/tasks.service.ts",
+      "description": "We remember that we decorated a handleCron method with @Cron decorator",
+      "line": 8
+    },
+    {
+      "file": "schedule/lib/decorators/cron.decorator.ts",
+      "description": "What this decorator does is it sets a metadata for it's target function\n\n(btw you can combine decorators using applyDecorators - here we combine multiple SetMetadata decorators)",
+      "line": 59
+    },
+    {
+      "file": "schedule/lib/schedule.explorer.ts",
+      "description": "Now that we have all the informations that we need, we can do whatever we want with this handleCron function, like wrapping it with custom try catch block and then adding it to scheduler orchestrator which is responsible for triggering methods on a given schedule",
+      "line": 71
+    },
+    {
+      "file": "schedule/lib/scheduler.orchestrator.ts",
+      "description": "We add a method to a list in the orchestrator",
+      "line": 118
+    },
+    {
+      "file": "schedule/lib/scheduler.orchestrator.ts",
+      "description": "And then for every method on a list we create a cron job",
+      "line": 70
+    }
+  ]
+}
